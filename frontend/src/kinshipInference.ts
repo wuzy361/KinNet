@@ -348,7 +348,7 @@ const STEP_NAMES: Record<string, string> = {
   'f': '父', 'm': '母', 's': '子', 'd': '女',
   'h': '夫', 'w': '妻', 'xb': '兄弟', 'xs': '姐妹',
   'ob': '兄', 'lb': '弟', 'os': '姐', 'ls': '妹',
-  's&o': '子(长)', 's&l': '子(幼)', 'd&o': '女(长)', 'd&l': '女(幼)',
+  's&o': '子', 's&l': '子', 'd&o': '女', 'd&l': '女',
 };
 
 function buildPathDesc(chain: string): string {
