@@ -1,0 +1,1318 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-color: #0a0c15;
+  --panel-bg: rgba(22, 25, 38, 0.85);
+  --text-main: #f0f2f8;
+  --text-muted: #8892a8;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --node-bg: #161929;
+  --node-border: #262b44;
+  --node-selected: #818cf8;
+  --male-color: #60a5fa;
+  --male-bg: rgba(96, 165, 250, 0.08);
+  --male-border: rgba(96, 165, 250, 0.25);
+  --male-glow: rgba(96, 165, 250, 0.15);
+  --female-color: #f472b6;
+  --female-bg: rgba(244, 114, 182, 0.08);
+  --female-border: rgba(244, 114, 182, 0.25);
+  --female-glow: rgba(244, 114, 182, 0.15);
+  --me-gradient: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+/* React Flow custom styles */
+.react-flow__node {
+  border-radius: 16px;
+  background: var(--node-bg);
+  border: 1.5px solid var(--node-border);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.react-flow__node:hover {
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.05) inset;
+}
+
+.react-flow__node.selected {
+  border-color: var(--node-selected);
+  box-shadow: 0 0 0 2px var(--node-selected), 0 0 16px rgba(99, 102, 241, 0.45), 0 0 40px rgba(99, 102, 241, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 10 !important;
+}
+
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background-color: var(--node-border);
+  border: 2px solid var(--node-bg);
+  transition: all 0.2s;
+}
+
+.react-flow__handle:hover {
+  background-color: var(--primary);
+  transform: scale(1.6);
+}
+
+.handle-parent {
+  background: #818cf8 !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.handle-spouse {
+  background: #f472b6 !important;
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.handle-child {
+  background: #34d399 !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+/* 连线模式关闭时隐藏 handle */
+.connect-mode-off .react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* 连线模式激活按钮样式 */
+.ctrl-btn-active {
+  background: rgba(99, 102, 241, 0.35) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Reset global button styles for ReactFlow Controls */
+.react-flow__controls button {
+  background: var(--node-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  gap: 0;
+}
+
+.react-flow__controls button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: none;
+}
+
+.react-flow__controls button svg {
+  fill: var(--text-main);
+  max-width: 16px;
+  max-height: 16px;
+}
+
+.react-flow__controls {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px);
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.controls-panel {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 24px);
+}
+
+/* ==================== 移动端适配 ==================== */
+@media (max-width: 640px) {
+  /* Header：缩小 */
+  .header {
+    padding: 8px 12px;
+    top: env(safe-area-inset-top, 6px);
+    left: 8px;
+    gap: 2px;
+    border-radius: 10px;
+  }
+
+  .header h1 {
+    font-size: 0.9rem;
+  }
+
+  .header p {
+    font-size: 0.65rem;
+  }
+
+  /* ReactFlow 缩放控件：右上角 */
+  .react-flow__controls {
+    top: env(safe-area-inset-top, 6px) !important;
+    right: 8px !important;
+    bottom: auto !important;
+    left: auto !important;
+  }
+
+  /* 控制栏：底部通栏，单行不换行 */
+  .controls-panel {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    max-width: 100%;
+    border-radius: 14px 14px 0 0;
+    padding: 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .ctrl-divider {
+    display: none;
+  }
+
+  .ctrl-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .ctrl-btn-icon {
+    padding: 8px;
+    flex-shrink: 0;
+  }
+
+  .random-gen-group {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .random-gen-label {
+    display: none;
+  }
+
+  .random-gen-unit {
+    display: none;
+  }
+
+  .stepper-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .stepper-input {
+    width: 32px;
+    font-size: 0.8rem;
+  }
+
+  /* 详情面板：底部弹出 */
+  .detail-panel {
+    right: 8px;
+    left: 8px;
+    top: auto;
+    bottom: 60px;
+    min-width: auto;
+    max-width: none;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  /* 结果弹窗 */
+  .result-overlay {
+    min-width: auto;
+    max-width: calc(100vw - 32px);
+    padding: 20px;
+  }
+
+  .result-overlay .answer {
+    font-size: 2rem;
+  }
+
+  /* 辈分标签文字更小 */
+  .generation-label-text {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+
+  /* Handle 加大触摸区域 */
+  .react-flow__handle {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .handle-parent {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .handle-child {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+.ctrl-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+  flex-shrink: 0;
+}
+
+.ctrl-btn {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  color: white;
+}
+
+.ctrl-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.ctrl-btn-green {
+  background: #059669;
+}
+
+.ctrl-btn-green:hover {
+  background: #047857;
+}
+
+.ctrl-btn-purple {
+  background: #7c3aed;
+}
+
+.ctrl-btn-purple:hover {
+  background: #6d28d9;
+}
+
+.ctrl-btn-purple:disabled {
+  background: #475569;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.random-gen-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.random-gen-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.random-gen-unit {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.random-gen-stepper {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.stepper-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.15s;
+  border-radius: 0;
+}
+
+.stepper-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  transform: none;
+}
+
+.stepper-input {
+  width: 36px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 0;
+  font-family: inherit;
+  -moz-appearance: textfield;
+}
+
+.stepper-input::-webkit-outer-spin-button,
+.stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepper-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.custom-node {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 110px;
+  position: relative;
+  perspective: 800px;
+}
+
+/* Card face wrapper */
+.custom-node .card-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, filter;
+}
+
+/* 3D Card Flip Animation — applied to card-face only, stays in place */
+.card-flipping .card-face {
+  animation: cardFlip3D 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes cardFlip3D {
+  0% {
+    transform: rotateY(0deg) scale(1);
+    filter: brightness(1);
+  }
+  15% {
+    transform: rotateY(50deg) scale(1.02);
+    filter: brightness(0.9);
+  }
+  35% {
+    transform: rotateY(85deg) scale(1.04);
+    filter: brightness(0.75);
+  }
+  40% {
+    transform: rotateY(90deg) scale(1.04);
+    filter: brightness(0.7);
+  }
+  45% {
+    transform: rotateY(90deg) scale(1.04);
+    filter: brightness(0.75);
+  }
+  60% {
+    transform: rotateY(40deg) scale(1.03);
+    filter: brightness(0.9);
+  }
+  75% {
+    transform: rotateY(10deg) scale(1.01);
+    filter: brightness(0.95);
+  }
+  85% {
+    transform: rotateY(-5deg) scale(1);
+    filter: brightness(1);
+  }
+  92% {
+    transform: rotateY(3deg) scale(1);
+    filter: brightness(1);
+  }
+  100% {
+    transform: rotateY(0deg) scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* Shine overlay removed — no white glint */
+
+/* Node border glow during flip */
+.react-flow__node:has(.card-flipping) {
+  border-color: rgba(192, 132, 252, 0.5) !important;
+  box-shadow: 0 0 20px rgba(192,132,252,0.2), 0 4px 24px rgba(0, 0, 0, 0.25) !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Avatar circle */
+.custom-node .node-avatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+  transition: transform 0.2s;
+}
+
+.custom-node:hover .node-avatar {
+  transform: scale(1.05);
+}
+
+.M-node .node-avatar {
+  background: var(--male-bg);
+  color: var(--male-color);
+  box-shadow: 0 0 12px var(--male-glow);
+}
+
+.F-node .node-avatar {
+  background: var(--female-bg);
+  color: var(--female-color);
+  box-shadow: 0 0 12px var(--female-glow);
+}
+
+.Me .node-avatar {
+  background: linear-gradient(135deg, rgba(129,140,248,0.15), rgba(192,132,252,0.15));
+  color: #c084fc;
+  box-shadow: 0 0 20px rgba(192,132,252,0.2);
+}
+
+.me-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: var(--me-gradient);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--node-bg);
+  box-shadow: 0 2px 6px rgba(129,140,248,0.4);
+}
+
+/* Node info */
+.custom-node .node-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.custom-node .name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+.custom-node .role {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.M-node .name {
+  color: var(--male-color);
+}
+
+.F-node .name {
+  color: var(--female-color);
+}
+
+.Me .name {
+  background: var(--me-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Gender-specific node borders */
+.react-flow__node:has(.M-node) {
+  border-color: var(--male-border);
+}
+
+.react-flow__node:has(.F-node) {
+  border-color: var(--female-border);
+}
+
+.react-flow__node:has(.Me) {
+  border-color: rgba(192, 132, 252, 0.35);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), 0 0 24px rgba(192,132,252,0.08);
+}
+
+.react-flow__node.selected:has(.Me) {
+  border-color: #c084fc;
+  box-shadow: 0 0 0 2px #c084fc, 0 0 16px rgba(192, 132, 252, 0.5), 0 0 40px rgba(192, 132, 252, 0.25), 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 10 !important;
+}
+
+/* Quick Add Buttons — 长条形，和节点一体感 */
+.custom-node .quick-add {
+  position: absolute;
+  background: rgba(99, 102, 241, 0.85);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  border: none;
+  padding: 0;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.custom-node:hover .quick-add {
+  opacity: 0.85;
+}
+
+/* 选中状态下 + 按钮始终可见 */
+.react-flow__node.selected .quick-add {
+  opacity: 0.9;
+}
+
+.custom-node .quick-add:hover {
+  opacity: 1;
+  background: var(--primary);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+}
+
+/* 上下长条：水平横条 */
+.quick-add.top,
+.quick-add.bottom {
+  left: 10%;
+  width: 80%;
+  height: 18px;
+  border-radius: 9px;
+}
+
+.quick-add.top {
+  top: -38px;
+}
+
+.quick-add.bottom {
+  bottom: -38px;
+}
+
+/* 左右长条：垂直竖条 */
+.quick-add.left,
+.quick-add.right {
+  top: 15%;
+  height: 70%;
+  width: 18px;
+  border-radius: 9px;
+}
+
+.quick-add.left {
+  left: -38px;
+}
+
+.quick-add.right {
+  right: -38px;
+}
+
+/* Gender Picker */
+.gender-picker {
+  position: absolute;
+  display: flex;
+  gap: 6px;
+  background: rgba(22, 25, 41, 0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px;
+  border-radius: 12px;
+  z-index: 20;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+}
+
+.gender-picker button {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  transition: all 0.15s;
+  min-width: 48px;
+  min-height: 40px;
+}
+
+.gender-picker .m-btn {
+  background: rgba(96, 165, 250, 0.2);
+  color: var(--male-color);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.gender-picker .m-btn:hover {
+  background: rgba(96, 165, 250, 0.35);
+}
+
+.gender-picker .f-btn {
+  background: rgba(244, 114, 182, 0.2);
+  color: var(--female-color);
+  border: 1px solid rgba(244, 114, 182, 0.3);
+}
+
+.gender-picker .f-btn:hover {
+  background: rgba(244, 114, 182, 0.35);
+}
+
+.gender-picker.top {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 22px;
+}
+
+.gender-picker.bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 22px;
+}
+
+.gender-picker.left {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 8px;
+}
+
+.gender-picker.right {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 8px;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+input,
+select {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary);
+}
+
+.custom-node .delete-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s;
+  z-index: 10;
+  border: 1.5px solid var(--node-bg);
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+}
+
+.custom-node:hover .delete-btn,
+.custom-node.selected .delete-btn {
+  opacity: 1;
+}
+
+.custom-node .delete-btn:hover {
+  background: #ef4444;
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+.result-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 17, 26, 0.95);
+  border: 1px solid var(--primary);
+  padding: 32px;
+  border-radius: 24px;
+  z-index: 100;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(99, 102, 241, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 360px;
+  max-width: 520px;
+}
+
+.result-overlay h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.result-overlay .answer {
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 10px 0;
+}
+
+.result-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: left;
+  gap: 12px;
+}
+
+.detail-label {
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  color: var(--text-main);
+  text-align: right;
+  line-height: 1.4;
+}
+
+.detail-code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  color: #c084fc;
+  background: rgba(192, 132, 252, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.match-badge {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.match-primary {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.match-combined {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+}
+
+.match-branch {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.match-fallback {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+}
+
+.match-error, .match-none {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+.close-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  margin-top: 16px;
+  align-self: center;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(0);
+}
+
+/* Node Detail Panel */
+.detail-panel {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+  z-index: 10;
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  min-width: 240px;
+  max-width: 320px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  animation: detailSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes detailSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.detail-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-panel-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.detail-gender-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.detail-gender-badge.male {
+  background: var(--male-bg);
+  color: var(--male-color);
+  border: 1px solid var(--male-border);
+}
+
+.detail-gender-badge.female {
+  background: var(--female-bg);
+  color: var(--female-color);
+  border: 1px solid var(--female-border);
+}
+
+.detail-section {
+  margin-bottom: 14px;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.detail-path-desc {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.detail-aliases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.detail-alias-tag {
+  font-size: 0.8rem;
+  color: #c084fc;
+  background: rgba(192, 132, 252, 0.1);
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(192, 132, 252, 0.15);
+  line-height: 1.4;
+}
+
+.detail-chain-code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  color: #818cf8;
+  background: rgba(129, 140, 248, 0.08);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(129, 140, 248, 0.12);
+  word-break: break-all;
+}
+
+/* Generation Labels */
+.generation-labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.generation-labels * {
+  pointer-events: none;
+}
+
+.generation-label {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+
+.generation-label-text {
+  position: sticky;
+  left: 12px;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(136, 146, 168, 0.5);
+  padding: 4px 10px;
+  border-radius: 0 0 8px 0;
+  background: rgba(10, 12, 21, 0.6);
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.generation-label-me .generation-label-text {
+  color: rgba(192, 132, 252, 0.7);
+  background: rgba(192, 132, 252, 0.08);
+  font-weight: 600;
+}
+
+.generation-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(71, 85, 105, 0.25);
+}
+
+.generation-label-me .generation-line {
+  background: rgba(192, 132, 252, 0.2);
+  box-shadow: 0 0 8px rgba(192, 132, 252, 0.1);
+}
+
+/* Icon button in controls */
+.ctrl-btn-icon {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 7px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  gap: 0;
+}
+
+.ctrl-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+/* Help Modal */
+.help-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: helpFadeIn 0.2s ease-out;
+}
+
+@keyframes helpFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.help-modal {
+  background: rgba(22, 25, 38, 0.98);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 0;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  animation: helpSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+@keyframes helpSlideUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.help-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.help-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.help-close {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0;
+  gap: 0;
+  transition: all 0.15s;
+}
+
+.help-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  transform: none;
+}
+
+.help-body {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.help-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.help-icon {
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1px;
+}
+
+.help-item strong {
+  color: #c084fc;
+  font-weight: 600;
+}
+
+.help-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+@media (max-width: 640px) {
+  .help-overlay {
+    align-items: flex-end;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .help-modal {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .help-header {
+    padding: 14px 16px 12px;
+  }
+
+  .help-header h2 {
+    font-size: 1rem;
+  }
+
+  .help-body {
+    padding: 12px 16px 20px;
+    gap: 10px;
+  }
+
+  .help-item {
+    font-size: 0.82rem;
+    gap: 8px;
+  }
+}
